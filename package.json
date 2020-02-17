@@ -1,0 +1,10 @@
+{
+    "name": "AraxBot",
+    "version": "0.0.1",
+    "description": "Bot for Arax Server",
+    "main": "araxBot.js",
+    "author": "Guillaume Lebegue",
+    "dependencies": {
+        "discord.js": "^11.5.1"
+    }
+}
