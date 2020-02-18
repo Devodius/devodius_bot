@@ -16,7 +16,7 @@ class chanelsUtils {
             console.log('File ' + config.ChanelFile + ' not valid');
             return undefined;
         }
-    
+
         if (type === undefined)
             return chanels;
         return chanels[type];

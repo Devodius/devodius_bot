@@ -1,40 +1,43 @@
 const Discord = require('discord.js');
+const Mongoose = require('mongoose');
+
 const auth = require('./auth.json');
 const config = require('./config.json');
-const chanelsUtils = require('./chanelsUtils');
 
-const chanelSetup = require('./chanelsAct/setup');
+const commandList = require('./commandList');
+const cmdHelp = require('./action/help');
+
+Mongoose.Promise = require('bluebird');
+Mongoose.connect(config.dbUrl, {promiseLibrary: require('bluebird'), useNewUrlParser: true, useUnifiedTopology: true})
+    .then(_ => console.log('[DB] connection succesfull'))
+    .catch(error => console.log(error));
 
 // Initialize Discord Bot
 var bot = new Discord.Client();
 
-bot.on('ready', function () {
-    console.log('Connected');
-    console.log('Logged in as: ' + bot.username + ' - (' + bot.id + ')');
+bot.on('ready', () => {
+    console.log('[DISCORD] Logged in as: ' + bot.user.username + ' - (' + bot.user.id + ')');
 });
 
-bot.on('message', message => {
+bot.on('message', async message => {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     if (message.content.substring(0, 3) == 'ax/') {
-        var args = message.content.substring(3).split(' ');
-        var cmd = args[0];
-       
-        args = args.splice(1);
-        console.log("Command received: " + cmd);
-        switch(cmd) {
-            // !ping
-            case 'ping':
-                message.channel.send('Pong!');
-            break;
-            case 'setup':
-                let limitedChanel = chanelsUtils.getChanel('Setup');
-                if (limitedChanel === undefined || limitedChanel.length === 0 || limitedChanel.includes(message.channel.id)) {
-                    chanelSetup.command(bot, message, args);
-                }
-            break;
-            // Just add any case commands if you want to..
-         }
+        let args = message.content.substring(3).split(' ');
+        args[0] = args[0].toLowerCase();
+
+        console.log("Command received: " + args);
+        if (args.length > 0 && commandList[args[0]] != undefined) {
+            let authorized = await commandList[args[0]]['Auth'](message, args);
+            if (authorized) {
+                args[1] = args.length > 1 ? args[1].toLowerCase() : "";
+                if (args.length > 1 && commandList[args[0]]['cmd'][args[1].toLowerCase()] != undefined)
+                    commandList[args[0]]['cmd'][args[1].toLowerCase()]['run'](bot, message, args)
+                else 
+                    commandList[args[0]]['cmd']['help']['run'](bot, message, args)
+            }
+        } else
+            cmdHelp(bot, message, args);
      }
 });
 

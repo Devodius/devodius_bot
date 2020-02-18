@@ -1,3 +1,4 @@
 {
-    "ChanelFile": "./stock/chanel.json"
+    "ChanelFile": "./data/chanel.json",
+    "dbUrl": "mongodb://127.0.0.1:27017/AraxBot"
 }

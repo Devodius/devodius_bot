@@ -5,6 +5,10 @@
     "main": "araxBot.js",
     "author": "Guillaume Lebegue",
     "dependencies": {
-        "discord.js": "^11.5.1"
+        "bluebird": "^3.7.2",
+        "discord.js": "^11.5.1",
+        "mongodb": "^3.5.3",
+        "mongoose": "^5.9.1",
+        "request": "^2.88.2"
     }
 }
