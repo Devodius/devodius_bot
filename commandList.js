@@ -3,6 +3,7 @@ const setupAuth = require('./auth/setupAuth');
 const listChannel = require('./action/setup/listChannel');
 const addChannel = require('./action/setup/addChanel');
 const addRole = require('./action/setup/addRole');
+const rmRole = require('./action/setup/rmRole');
 
 const playerInfo = require('./action/albion/player_info.js');
 
@@ -40,6 +41,13 @@ module.exports = {
                 'readme': {
                     'use': 'ax/setup addRole [emote] [role]',
                     'desc': 'Ajoute un couple role / emote'
+                }
+            },
+            'rmrole': {
+                'run': (bot, message, args) => {rmRole(bot, message, args)},
+                'readme': {
+                    'use': 'ax/setup rmRole [emote / role]',
+                    'desc': 'Retire un couple role / emote'
                 }
             },
             'ping': {

@@ -20,6 +20,32 @@ class RoleService {
         return Role.findOne({emote}).exec()
     }
 
+    removeRole(identifiant) {
+        return new Promise((resolve, reject) => {
+            Role.find({emote: identifiant}, (err, res) => {
+                if (!err && res.length) {
+                    Role.findOneAndDelete({emote: identifiant}, (err, res) => {
+                        if (err)
+                            reject(err);
+                        resolve(true);
+                    })
+                } else {
+                    Role.find({role: identifiant}, (err, res) => {
+                        if (!err && res.length) {
+                            Role.findOneAndDelete({role: identifiant}, (err, res) => {
+                                if (err)
+                                    reject(err);
+                                resolve(true);
+                            })
+                        } else
+                            reject('Not Found');
+                    })
+                }
+
+            })
+        })
+    }
+
 }
 
 module.exports = new RoleService();

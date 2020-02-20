@@ -4,20 +4,19 @@ const RoleService = require('../../service/roleService');
 
 module.exports = async (bot, message, args) => {
     const messageRet = new Discord.RichEmbed()
-        .setTitle('Ajout de role');
-    
-    if (args.length < 4)
-        messageRet.addField('ax/setup addRole [emote] [role]', 'Pour ajouter des couples emote / role');
+        .setTitle('Suppression de role');
+
+    if (args.length < 3)
+        messageRet.addField('ax/setup rmRole [emote / role]', 'Pour retirer un role');
     else {
         try {
-            console.log('args: ', args);
-            await RoleService.addRole(args[2], args[3]);
+            await RoleService.removeRole(args[2])
             messageRet.setDescription(':white_check_mark:');
         } catch (err) {
-            if (err.name === 'MongoError' && err.code == 11000)
-                messageRet.setDescription(':red_square: Déjà utilisé');
+            if (err === 'Not Found')
+                messageRet.setDescription(':red_square: non trouvé');
             else {
-                console.log('err: ', err);
+                console.log('rmRole err: ', err);
                 messageRet.setDescription(':red_square:');
             }
         }
