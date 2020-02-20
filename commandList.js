@@ -5,6 +5,7 @@ const addChannel = require('./action/setup/addChanel');
 const addRole = require('./action/setup/addRole');
 
 const playerInfo = require('./action/albion/player_info.js');
+const guildInfo = require('./action/albion/guild_info.js');
 
 module.exports = {
     'setup': {
@@ -67,6 +68,13 @@ module.exports = {
             },
             'stat': {
                 'run': (bot, message, args) => {playerInfo(bot, message, args);},
+                'readme': {
+                    'use': '-',
+                    'desc': '-'
+                }
+            },
+            'guilde': {
+                'run': (bot, message, args) => {guildInfo(bot, message, args);},
                 'readme': {
                     'use': '-',
                     'desc': '-'

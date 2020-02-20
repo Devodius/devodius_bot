@@ -33,7 +33,7 @@ bot.on('message', async message => {
                 args[1] = args.length > 1 ? args[1].toLowerCase() : "";
                 if (args.length > 1 && commandList[args[0]]['cmd'][args[1].toLowerCase()] != undefined)
                     commandList[args[0]]['cmd'][args[1].toLowerCase()]['run'](bot, message, args)
-                else 
+                else
                     commandList[args[0]]['cmd']['help']['run'](bot, message, args)
             }
         } else
