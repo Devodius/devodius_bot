@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const channelUtils = require('../../chanelsUtils');
 
 module.exports = (bot, message, args) => {
-    const messageRet = new Discord.RichEmbed()
+    const messageRet = new Discord.MessageEmbed()
         .setTitle('Ajout d\'un chanel');
     if (args.length < 4)
         messageRet.addField('ax/setup addChanel [type] [chanel Ref]', 'Pour ajouter des channels')

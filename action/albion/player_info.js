@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const AlbionService = require('../../service/albionService.js');
 
 module.exports = async (bot, message, args) => {
-    const messageRet = new Discord.RichEmbed()
+    const messageRet = new Discord.MessageEmbed()
 
     if (args.length < 3)
         return undefined;

@@ -3,9 +3,12 @@ const setupAuth = require('./auth/setupAuth');
 const listChannel = require('./action/setup/listChannel');
 const addChannel = require('./action/setup/addChanel');
 const addRole = require('./action/setup/addRole');
+const rmRole = require('./action/setup/rmRole');
 
 const playerInfo = require('./action/albion/player_info.js');
 const guildInfo = require('./action/albion/guild_info.js');
+const albionCall = require('./action/albion/setupCall');
+const albionDeleteCall = require('./action/albion/deleteCall');
 
 module.exports = {
     'setup': {
@@ -43,6 +46,20 @@ module.exports = {
                     'desc': 'Ajoute un couple role / emote'
                 }
             },
+            'rmrole': {
+                'run': (bot, message, args) => {rmRole(bot, message, args)},
+                'readme': {
+                    'use': 'ax/setup rmRole [emote / role]',
+                    'desc': 'Retire un couple role / emote'
+                }
+            },
+            'messagerole': {
+                'run': (bot, message, args) => {},
+                'readme': {
+                    'use': 'ax/setup messageRole [messageId]',
+                    'desc': 'Choisi le message sur lequel afficher la selection de role'
+                }
+            },
             'ping': {
                 'run': (bot, message, args) => {message.channel.send('pong!');},
                 'readme': {
@@ -78,6 +95,27 @@ module.exports = {
                 'readme': {
                     'use': '-',
                     'desc': '-'
+                }
+            },
+            'setupcall': {
+                'run': (bot, message, args) => {albionCall.setup(bot, message, args)},
+                'readme': {
+                    'use': 'ax/albion setupCall',
+                    'desc': 'run call setup'
+                }
+            },
+            'deletecall': {
+                'run': (bot, message, args) => {albionDeleteCall(bot, message, args)},
+                'readme': {
+                    'use': 'ax/albion deleteCall [messageId]',
+                    'desc': 'delete call'
+                }
+            },
+            'deleteallcall': {
+                'run': (bot, message, args) => {albionDeleteCall(bot, message, args, true)},
+                'readme': {
+                    'use': 'ax/albion deleteAllCall',
+                    'desc': 'delete all call'
                 }
             }
         }

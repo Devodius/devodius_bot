@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 var commandList = require('../../commandList');
 
 module.exports = (bot, message, args) => {
-    const messageRet = new Discord.RichEmbed()
+    const messageRet = new Discord.MessageEmbed()
         .setTitle('Aide setup');
 
     for (const cmd in commandList['setup']['cmd'])
