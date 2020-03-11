@@ -1,6 +1,7 @@
 const Discord = require('discord.js')
 
 const CallsService = require('../../service/callsService');
+const environnment = require('../../environment.json');
 
 class SetupCall {
 
@@ -45,6 +46,7 @@ class SetupCall {
         const messageRet = this._getEmbed(call);
         const chan = await bot.channels.fetch(call.discordChannel);
         if (chan) {
+            chan.send("<@&" + environnment[global.prod ? "prod" : "dev"].albionMention + ">");
             chan.send(messageRet)
             .then(mess => {
                 CallsService.updateCall(call.id, {messId: mess.id});
@@ -56,7 +58,7 @@ class SetupCall {
     }
 
     async _startMessage(message) {
-        const call = await CallsService.addCall({discordUser: message.author.id, discordChannel: message.channel.id});
+        const call = await CallsService.addCall({discordUser: message.author.id, discordChannel: environnment[global.prod ? "prod" : "dev"].albionAnon});
         message.author.send("Setup call commencé\n\nIndiquez le leader du call");
     }
 
@@ -167,16 +169,18 @@ class SetupCall {
 
     async addToReact(bot, messageReaction, user) {
         const call = await CallsService.getCallByMessId(messageReaction.message.id);
-        call.people.push({discord: user.id, display: user.username});
+        const channel = await bot.channels.fetch(call.discordChannel)
+        const member = channel.members.get(user.id);
+        call.people.push({discord: user.id, display: (member.nickname ? member.nickname : user.username)});
         call.save();
         const newEmbed = this._getEmbed(call);
         messageReaction.message.edit(newEmbed);
     }
 
-    async _removePeopleFromList(people, name) {
+    async _removePeopleFromList(people, userId) {
         return new Promise(async (resolve, reject) => {
             for await (let person of people) {
-                if (person.display == name) {
+                if (person.discord == userId) {
                     resolve(people.indexOf(person));
                     break;
                 }
@@ -189,7 +193,7 @@ class SetupCall {
         const call = await CallsService.getCallByMessId(messageReaction.message.id);
 
         try {
-            const pos = await this._removePeopleFromList(call.people, user.username);
+            const pos = await this._removePeopleFromList(call.people, user.id);
             call.people.splice(pos, 1);
             call.save();
         } catch(err) {}

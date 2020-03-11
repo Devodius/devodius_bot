@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const Mongoose = require('mongoose');
 
-const auth = require('./auth.json');
+const environnment = require('./environment.json');
 const config = require('./config.json');
 
 const commandList = require('./commandList');
@@ -13,6 +13,8 @@ Mongoose.Promise = require('bluebird');
 Mongoose.connect(config.dbUrl, {promiseLibrary: require('bluebird'), useNewUrlParser: true, useUnifiedTopology: true})
     .then(_ => console.log('[DB] connection succesfull'))
     .catch(error => console.log(error));
+
+global.prod = process.env.PROD ? true : false;
 
 // Initialize Discord Bot
 var bot = new Discord.Client();
@@ -69,4 +71,4 @@ bot.on('messageReactionRemove', async (messageReaction, user) => {
         AlbionSetupCall.removeToReact(bot, messageReaction, user);
 })
 
-bot.login(auth.token);
+bot.login(environnment[global.prod ? "prod" : "dev"].auth);
