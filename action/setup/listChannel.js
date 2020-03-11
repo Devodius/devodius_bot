@@ -3,7 +3,7 @@ const channelUtils = require('../../chanelsUtils');
 
 module.exports = (bot, message, args) => {
     const chanels = channelUtils.getChanel();
-    const messageRet = new Discord.RichEmbed()
+    const messageRet = new Discord.MessageEmbed()
         .setTitle('Liste des channels enregistré:');
 
     if (chanels === undefined) {
@@ -15,14 +15,15 @@ module.exports = (bot, message, args) => {
             if (chanels[type].length > 0) {
                 let listChanel = [];
                 for (const pos in chanels[type]) {
-                    listChanel.push(message.guild.channels.get(chanels[type][pos]).name);
+                    console.log('channels: ', message.guild.channels.resolve(chanels[type][pos]).name);
+                    listChanel.push(message.guild.channels.resolve(chanels[type][pos]).name);
                 }
                 messageRet.addField(type, listChanel);
             } else {
                 messageRet.addField(type, 'Tous');
             }
         }
-        messageRet.addBlankField()
+        messageRet.addField('\u200b', '\u200b')
         .addField('ax/setup addChanel [type] [chanel Ref]', 'Pour ajouter des channels');
     }
     message.channel.send(messageRet);

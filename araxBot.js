@@ -6,6 +6,8 @@ const config = require('./config.json');
 
 const commandList = require('./commandList');
 const cmdHelp = require('./action/help');
+const AlbionSetupCall = require('./action/albion/setupCall');
+const CallService = require('./service/callsService');
 
 Mongoose.Promise = require('bluebird');
 Mongoose.connect(config.dbUrl, {promiseLibrary: require('bluebird'), useNewUrlParser: true, useUnifiedTopology: true})
@@ -17,12 +19,22 @@ var bot = new Discord.Client();
 
 bot.on('ready', () => {
     console.log('[DISCORD] Logged in as: ' + bot.user.username + ' - (' + bot.user.id + ')');
+    CallService.getAllDone()
+        .then(calls => {
+            console.log('caching ', calls.length, ' message for reaction about calls');
+            calls.forEach(async call => {
+                tmp = await bot.channels.fetch(call.discordChannel);
+                mess = await tmp.messages.fetch(call.messId);
+            });
+        }).catch(err => {
+            console.log('err: ', err);
+        });
 });
 
 bot.on('message', async message => {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
-    if (message.content.substring(0, 3) == 'ax/') {
+    if (message.content.substring(0, 3) == 'ax/' && message.guild) {
 		let args = message.content.substring(3).split(' ');
 		args = args.filter(n => n);
         args[0] = args[0].toLowerCase();
@@ -39,7 +51,22 @@ bot.on('message', async message => {
             }
         } else
             cmdHelp(bot, message, args);
-     }
+    }
+    if (!message.guild) {
+        tmp = await CallService.getCallValidByuser(message.author.id);
+        if (tmp)
+            AlbionSetupCall.setup(bot, message, [tmp]);
+    }
 });
+
+bot.on('messageReactionAdd', async (messageReaction, user) => {
+    if (messageReaction.emoji.toString() == '✅' && user.id != bot.user.id)
+        AlbionSetupCall.addToReact(bot, messageReaction, user);
+})
+
+bot.on('messageReactionRemove', async (messageReaction, user) => {
+    if (messageReaction.emoji.toString() == '✅' && user.id != bot.user.id)
+        AlbionSetupCall.removeToReact(bot, messageReaction, user);
+})
 
 bot.login(auth.token);

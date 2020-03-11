@@ -6,7 +6,7 @@ module.exports = async (message, args) => {
     if (!message.guild)
         return false;
     try {
-        member = await message.guild.fetchMember(message.author);
+        member = await message.guild.member(message.author);
     } catch (error) {
         console.log('setupAuthError: ', error);
         return false;

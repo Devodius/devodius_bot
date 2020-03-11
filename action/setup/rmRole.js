@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const RoleService = require('../../service/roleService');
 
 module.exports = async (bot, message, args) => {
-    const messageRet = new Discord.RichEmbed()
+    const messageRet = new Discord.MessageEmbed()
         .setTitle('Suppression de role');
 
     if (args.length < 3)
