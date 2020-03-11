@@ -22,18 +22,18 @@ class SetupCall {
         const listPeople2 = Array();
         const listPeople3 = Array();
         call.people.forEach((one, index) => {
-            if ((index % 3) == 0)
+            if ((index % 3) == 0 && index < call.numPeople)
                 listPeople1.push(one.display)
         });
         call.people.forEach((one, index) => {
-            if (((index + 1) % 3) == 0)
+            if (((index + 1) % 3) == 0 && index < call.numPeople)
                 listPeople2.push(one.display)
         });
         call.people.forEach((one, index) => {
-            if (((index + 2) % 3) == 0)
+            if (((index + 2) % 3) == 0 && index < call.numPeople)
                 listPeople3.push(one.display)
         });
-        embed.addField('Participants (' + call.people.length + '/' + call.numPeople +'): ', listPeople1.length ? listPeople1 : '\u200b', true);
+        embed.addField('Participants (' + (call.people.length > call.numPeople ? call.numPeople : call.people.length) + '/' + call.numPeople +'): ', listPeople1.length ? listPeople1 : '\u200b', true);
         if (listPeople2.length)
             embed.addField('\u200b', listPeople2, true);
         if (listPeople3.length)

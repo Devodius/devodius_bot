@@ -5,7 +5,7 @@
     "main": "araxBot.js",
     "author": "Guillaume Lebegue",
     "scripts": {
-        "start": "PROD=false node araxBot.js",
+        "start": "node araxBot.js",
         "start_prod": "PROD=true node araxBot.js"
     },
     "dependencies": {
