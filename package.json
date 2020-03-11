@@ -4,6 +4,10 @@
     "description": "Bot for Arax Server",
     "main": "araxBot.js",
     "author": "Guillaume Lebegue",
+    "scripts": {
+        "start": "PROD=false node araxBot.js",
+        "start_prod": "PROD=true node araxBot.js"
+    },
     "dependencies": {
         "bluebird": "^3.7.2",
         "canvas": "^2.6.1",
