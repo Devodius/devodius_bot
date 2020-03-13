@@ -66,7 +66,17 @@ class CallsService {
         })
     }
 
-    getAllDone(discordGuild) {
+    getAllDone() {
+        return new Promise((resolve, reject) => {
+            Calls.find({done: 10}, (err, calls) => {
+                if (err)
+                    reject(err);
+                resolve(calls);
+            })
+        })
+    }
+
+    getDone(discordGuild) {
         return new Promise((resolve, reject) => {
             Calls.find({done: 10, discordGuild}, (err, calls) => {
                 if (err)
