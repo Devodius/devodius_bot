@@ -12,7 +12,10 @@ module.exports = async (bot, message, args) => {
         calls.forEach(call => {
             tab.push(call.activity + ': ' + call.messId);
         })
-        embed.addField('Activité: MessageID', tab);
+        if (tab.length)
+            embed.addField('Activité: MessageID', tab);
+        else
+            embed.addField('Activité: MessageID', 'Aucun call')
         embed.addField('Pour supprimer un call:', 'ax/albion deleteCall [MessageID]');
         message.channel.send(embed);
     } catch(err) {
