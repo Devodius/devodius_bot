@@ -33,7 +33,7 @@ class SetupCall {
             if (((index + 2) % 3) == 0 && index < call.numPeople)
                 listPeople3.push('|' + one.role + '| ' + one.display)
         });
-        embed.addField('Participants (' + (call.people.length > call.numPeople ? call.numPeople : call.people.length) + '/' + call.numPeople +'): ', listPeople1.length ? listPeople1 : '\u200b', true);
+        embed.addField('Participants (' + (call.people.length > call.numPeople ? call.numPeople : call.people.length) + '/' + call.numPeople +'):\n|T|: Tank |D|: Dps |H|: Heal', listPeople1.length ? listPeople1 : '\u200b', true);
         if (listPeople2.length)
             embed.addField('\u200b', listPeople2, true);
         if (listPeople3.length)
