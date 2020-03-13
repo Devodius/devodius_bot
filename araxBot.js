@@ -3,6 +3,7 @@ const Mongoose = require('mongoose');
 
 const environnment = require('./environment.json');
 const config = require('./config.json');
+const shortcut = require('./shortcut.json');
 
 const commandList = require('./commandList');
 const cmdHelp = require('./action/help');
@@ -33,9 +34,21 @@ bot.on('ready', () => {
         });
 });
 
+async function searchShortcut(cmd) {
+    for await (let cut of shortcut) {
+        console.log('cut: ', cut);
+        if (cmd.startsWith(cut.key)) {
+            return (cut.cmd + cmd.substring(cut.key.length));
+        }
+    }
+    return (cmd);
+}
+
 bot.on('message', async message => {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
+    message.content = await searchShortcut(message.content);
+    console.log('content: ', message.content);
     if (message.content.substring(0, 3) == 'ax/' && message.guild) {
 		let args = message.content.substring(3).split(' ');
 		args = args.filter(n => n);
