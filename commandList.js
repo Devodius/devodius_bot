@@ -9,6 +9,7 @@ const playerInfo = require('./action/albion/player_info.js');
 const guildInfo = require('./action/albion/guild_info.js');
 const albionCall = require('./action/albion/setupCall');
 const albionDeleteCall = require('./action/albion/deleteCall');
+const albionListCall = require('./action/albion/listCall');
 
 module.exports = {
     'setup': {
@@ -98,10 +99,17 @@ module.exports = {
                 }
             },
             'setupcall': {
-                'run': (bot, message, args) => {albionCall.setup(bot, message, args)},
+                'run': (bot, message, args) => {albionCall.setup(bot, message, args);},
                 'readme': {
                     'use': 'ax/albion setupCall',
                     'desc': 'run call setup'
+                }
+            },
+            'listcall': {
+                'run': (bot, message, args) => {albionListCall(bot, message, args);},
+                'readme': {
+                    'use': 'ax/albion listCall',
+                    'desc': 'list all active call'
                 }
             },
             'deletecall': {

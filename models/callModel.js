@@ -21,6 +21,7 @@ const callsModel = new Schema({
     messId: {type: String},
     discordUser: {type: String},
     discordChannel: {type: String},
+    discordGuild: {type: String},
     done: {type: Number, default: 0, min: 0, max: 10}
 })
 

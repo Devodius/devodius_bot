@@ -17,6 +17,7 @@ class CallsService {
             newCall.numPeople = call.numPeople;
             newCall.discordUser = call.discordUser;
             newCall.discordChannel = call.discordChannel;
+            newCall.discordGuild = call.discordGuild;
             newCall.save((err, doc) => {
                 if (err)
                     reject(err);
@@ -65,9 +66,9 @@ class CallsService {
         })
     }
 
-    getAllDone() {
+    getAllDone(discordGuild) {
         return new Promise((resolve, reject) => {
-            Calls.find({done: 10}, (err, calls) => {
+            Calls.find({done: 10, discordGuild}, (err, calls) => {
                 if (err)
                     reject(err);
                 resolve(calls);
@@ -95,9 +96,9 @@ class CallsService {
         })
     }
 
-    deleteAll() {
+    deleteAll(discordGuild) {
         return new Promise((resolve, reject) => {
-            Calls.deleteMany({}, (err, res) => {
+            Calls.deleteMany({discordGuild}, (err, res) => {
                 if (err)
                     reject(err);
                 resolve();

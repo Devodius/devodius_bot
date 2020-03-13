@@ -8,7 +8,7 @@ module.exports = async (bot, message, args, all = false) => {
     .setTitle('Suppression call');
     if (all) {
         try {
-            await CallsService.deleteAll();
+            await CallsService.deleteAll(message.guild.id);
             embed.setDescription(':white_check_mark:');
         } catch (err) {
             embed.setDescription(':red_square:');

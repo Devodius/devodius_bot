@@ -61,7 +61,7 @@ class SetupCall {
         const call = await CallsService.getCallValidByuser(message.author.id);
         if (call != null)
             await CallsService.deleteById(call._id);
-        await CallsService.addCall({discordUser: message.author.id, discordChannel: environnment[global.prod ? "prod" : "dev"].albionAnon});
+        await CallsService.addCall({discordUser: message.author.id, discordChannel: environnment[global.prod ? "prod" : "dev"].albionAnon, discordGuild: message.guild.id});
         message.author.send("Setup call commencé\n\nIndiquez le leader du call");
     }
 
