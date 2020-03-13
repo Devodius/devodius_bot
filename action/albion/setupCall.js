@@ -23,15 +23,15 @@ class SetupCall {
         const listPeople3 = Array();
         call.people.forEach((one, index) => {
             if ((index % 3) == 0 && index < call.numPeople)
-                listPeople1.push(one.display)
+                listPeople1.push('|' + one.role + '| ' + one.display)
         });
         call.people.forEach((one, index) => {
             if (((index + 1) % 3) == 0 && index < call.numPeople)
-                listPeople2.push(one.display)
+                listPeople2.push('|' + one.role + '| ' + one.display)
         });
         call.people.forEach((one, index) => {
             if (((index + 2) % 3) == 0 && index < call.numPeople)
-                listPeople3.push(one.display)
+                listPeople3.push('|' + one.role + '| ' + one.display)
         });
         embed.addField('Participants (' + (call.people.length > call.numPeople ? call.numPeople : call.people.length) + '/' + call.numPeople +'): ', listPeople1.length ? listPeople1 : '\u200b', true);
         if (listPeople2.length)
@@ -170,17 +170,7 @@ class SetupCall {
             this._validateMessage(args[0], message, bot);
     }
 
-    async addToReact(bot, messageReaction, user) {
-        const call = await CallsService.getCallByMessId(messageReaction.message.id);
-        const channel = await bot.channels.fetch(call.discordChannel)
-        const member = channel.members.get(user.id);
-        call.people.push({discord: user.id, display: (member.nickname ? member.nickname : user.username)});
-        call.save();
-        const newEmbed = this._getEmbed(call);
-        messageReaction.message.edit(newEmbed);
-    }
-
-    async _removePeopleFromList(people, userId) {
+    async _posPeopleFromList(people, userId) {
         return new Promise(async (resolve, reject) => {
             for await (let person of people) {
                 if (person.discord == userId) {
@@ -192,11 +182,44 @@ class SetupCall {
         })
     }
 
+    async addToReact(bot, messageReaction, user) {
+        try {
+            const call = await CallsService.getCallByMessId(messageReaction.message.id);
+            await this._posPeopleFromList(call.people, user.id)
+        } catch(err) {
+            const embed = new Discord.MessageEmbed()
+            .setColor("#a225f5")
+            .setTitle('Inscription')
+            const newmess = await user.send(`Participer avec quel role ?\n'T'(Tank) / 'D'(Dps) / 'H'(Heal)`);
+            newmess.channel.awaitMessages(_ => {return true}, {max: 1, time: 30000, errors: ['time']})
+                .then(async collected => {
+                    if (collected.first().content === 'T' || collected.first().content === 'D' || collected.first().content === 'H') {
+                        embed.addField('\u200b', ':white_check_mark:');
+                        user.send(embed);
+                        const call = await CallsService.getCallByMessId(messageReaction.message.id);
+                        const channel = await bot.channels.fetch(call.discordChannel)
+                        const member = channel.members.get(user.id);
+                        call.people.push({discord: user.id, display: (member.nickname ? member.nickname : user.username), role: collected.first().content});
+                        call.save();
+                        const newEmbed = this._getEmbed(call);
+                        messageReaction.message.edit(newEmbed);
+                    } else {
+                        embed.addField('\u200b', ':red_square: Invalid');
+                        user.send(embed);
+                    }
+                }).catch(err => {
+                    console.log('err: ', err);
+                    embed.addField('\u200b', ':red_square: Time Out');
+                    user.send(embed);
+                })
+        }
+    }
+
     async removeToReact(bot, messageReaction, user) {
         const call = await CallsService.getCallByMessId(messageReaction.message.id);
 
         try {
-            const pos = await this._removePeopleFromList(call.people, user.id);
+            const pos = await this._posPeopleFromList(call.people, user.id);
             call.people.splice(pos, 1);
             call.save();
         } catch(err) {}

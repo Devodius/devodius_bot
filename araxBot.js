@@ -46,9 +46,11 @@ async function searchShortcut(cmd) {
 bot.on('message', async message => {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
+    if (message.author.id == bot.user.id)
+        return;
     message.content = await searchShortcut(message.content);
-    console.log('command: ', message.content);
     if (message.content.substring(0, 3) == 'ax/' && message.guild) {
+        console.log('command: ', message.content);
 		let args = message.content.substring(3).split(' ');
 		args = args.filter(n => n);
         args[0] = args[0].toLowerCase();

@@ -14,7 +14,8 @@ const callsModel = new Schema({
     people: [
         {
             discord: {type: String},
-            display: {type: String}
+            display: {type: String},
+            role: {type: String, enume: ['T', 'D', 'H']}
         }
     ],
     messId: {type: String},
