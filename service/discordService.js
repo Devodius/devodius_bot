@@ -24,7 +24,7 @@ class DiscordService {
         return "<@" + userId + ">";
     }
 
-    getChannelMention(mention) {
+    getChannelID(mention) {
         const matches = mention.match(/^<#?(\d+)>$/);
 
         if (!matches)

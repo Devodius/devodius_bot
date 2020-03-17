@@ -9,6 +9,7 @@ const commandList = require('./commandList');
 const cmdHelp = require('./action/help');
 const AlbionSetupCall = require('./action/albion/setupCall');
 const CallService = require('./service/callsService');
+const SetupService = require('./service/setupService');
 
 Mongoose.Promise = require('bluebird');
 Mongoose.connect(config.dbUrl, {promiseLibrary: require('bluebird'), useNewUrlParser: true, useUnifiedTopology: true})
@@ -34,6 +35,14 @@ bot.on('ready', () => {
         });
 });
 
+bot.on('guildCreate', async guild => {
+    await SetupService.getSetup(guild);
+})
+
+bot.on('guildDelete', async guild => {
+    await SetupService.deleteSetup(guild);
+})
+
 async function searchShortcut(cmd) {
     for await (let cut of shortcut) {
         if (cmd.startsWith(cut.key)) {
@@ -49,29 +58,34 @@ bot.on('message', async message => {
     if (message.author.id == bot.user.id)
         return;
     message.content = await searchShortcut(message.content);
-    if (message.content.substring(0, 3) == 'ax/' && message.guild) {
-        console.log('command: ', message.content);
-		let args = message.content.substring(3).split(' ');
-		args = args.filter(n => n);
-        args[0] = args[0].toLowerCase();
+    if (message.guild) {
+        const setup = await SetupService.getSetup(message.guild);
+        if (message.content.substring(0, 3) == 'ax/') {
+            console.log('command: ', message.content);
+            let args = message.content.substring(3).split(' ');
+            args = args.filter(n => n);
+            args[0] = args[0].toLowerCase();
 
-        console.log("Command received: " + args);
-        if (args.length > 0 && commandList[args[0]] != undefined) {
-            let authorized = await commandList[args[0]]['Auth'](message, args);
-            if (authorized) {
-                args[1] = args.length > 1 ? args[1].toLowerCase() : "";
-                if (args.length > 1 && commandList[args[0]]['cmd'][args[1].toLowerCase()] != undefined)
-                    commandList[args[0]]['cmd'][args[1].toLowerCase()]['run'](bot, message, args)
-                else
-                    commandList[args[0]]['cmd']['help']['run'](bot, message, args)
-            }
-        } else
-            cmdHelp(bot, message, args);
+            console.log("Command received: " + args);
+            if (args.length > 0 && commandList[args[0]] != undefined) {
+                let authorized = await commandList[args[0]]['Auth'](setup, message, args);
+                if (authorized) {
+                    args[1] = args.length > 1 ? args[1].toLowerCase() : "";
+                    if (args.length > 1 && commandList[args[0]]['cmd'][args[1].toLowerCase()] != undefined)
+                        commandList[args[0]]['cmd'][args[1].toLowerCase()]['run'](bot, setup, message, args)
+                    else
+                        commandList[args[0]]['cmd']['help']['run'](bot, setup, message, args)
+                }
+            } else
+                cmdHelp(bot, message, args);
+        }
     }
     if (!message.guild) {
-        tmp = await CallService.getCallValidByuser(message.author.id);
-        if (tmp)
-            AlbionSetupCall.setup(bot, message, [tmp]);
+        const call = await CallService.getCallValidByuser(message.author.id);
+        if (call) {
+        const setup = await SetupService.getSetup(bot.guilds.resolve(call.discordGuild));
+            AlbionSetupCall.setup(bot, setup, message, [call]);
+        }
     }
 });
 

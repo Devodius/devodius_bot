@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 
 const CallsService = require('../../service/callsService');
-const environnment = require('../../environment.json');
+//const environnment = require('../../environment.json');
 
 class SetupCall {
 
@@ -42,11 +42,11 @@ class SetupCall {
         return embed;
     }
 
-    async _displayCall(bot, call) {
+    async _displayCall(bot, call, guild_setup) {
         const messageRet = this._getEmbed(call);
         const chan = await bot.channels.fetch(call.discordChannel);
         if (chan) {
-            chan.send("<@&" + environnment[global.prod ? "prod" : "dev"].albionMention + ">");
+            chan.send("<@&" + guild_setup.albionMention + ">");
             chan.send(messageRet)
             .then(mess => {
                 CallsService.updateCall(call.id, {messId: mess.id});
@@ -57,11 +57,11 @@ class SetupCall {
         }
     }
 
-    async _startMessage(message) {
+    async _startMessage(message, guild_setup) {
         const call = await CallsService.getCallValidByuser(message.author.id);
         if (call != null)
             await CallsService.deleteById(call._id);
-        await CallsService.addCall({discordUser: message.author.id, discordChannel: environnment[global.prod ? "prod" : "dev"].albionAnon, discordGuild: message.guild.id});
+        await CallsService.addCall({discordUser: message.author.id, discordChannel: guild_setup.albionAnonChan, discordGuild: message.guild.id});
         message.author.send("Setup call commencé\n\nIndiquez le leader du call");
     }
 
@@ -123,7 +123,7 @@ class SetupCall {
         }
     }
 
-    async _validateMessage(call, message, bot) {
+    async _validateMessage(call, message, bot, guild_setup) {
         const messageRet = new Discord.MessageEmbed()
         if (message.content.toLowerCase() != 'y') {
             messageRet.setTitle('Suppression du call')
@@ -139,15 +139,15 @@ class SetupCall {
             return;
         }
         CallsService.updateCall(call.id, {done: 10});
-        this._displayCall(bot, call);
+        this._displayCall(bot, call, guild_setup);
         messageRet.setTitle('Ajout du call');
         messageRet.setDescription(':white_check_mark:');
         message.author.send(messageRet);
     }
 
-    async setup (bot, message, args) {
+    async setup(bot, guild_setup, message, args) {
         if (args.length >= 2 && args[1] == 'setupcall')
-            this._startMessage(message);
+            this._startMessage(message, guild_setup);
         if (args[0].done == 0)
             this._leaderMessage(args[0], message);
         if (args[0].done == 1)
@@ -167,7 +167,7 @@ class SetupCall {
         if (args[0].done == 8)
             this._numPeopleMessage(args[0], message);
         if (args[0].done == 9)
-            this._validateMessage(args[0], message, bot);
+            this._validateMessage(args[0], message, bot, guild_setup);
     }
 
     async _posPeopleFromList(people, userId) {
