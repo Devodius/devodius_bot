@@ -185,6 +185,8 @@ class SetupCall {
     async addToReact(bot, messageReaction, user) {
         try {
             const call = await CallsService.getCallByMessId(messageReaction.message.id);
+            if (!call)
+                return;
             await this._posPeopleFromList(call.people, user.id)
         } catch(err) {
             const embed = new Discord.MessageEmbed()
@@ -217,14 +219,15 @@ class SetupCall {
 
     async removeToReact(bot, messageReaction, user) {
         const call = await CallsService.getCallByMessId(messageReaction.message.id);
-
-        try {
-            const pos = await this._posPeopleFromList(call.people, user.id);
-            call.people.splice(pos, 1);
-            call.save();
-        } catch(err) {}
-        const newEmbed = this._getEmbed(call);
-        messageReaction.message.edit(newEmbed);
+        if (call) {
+            try {
+                const pos = await this._posPeopleFromList(call.people, user.id);
+                call.people.splice(pos, 1);
+                call.save();
+            } catch(err) {}
+            const newEmbed = this._getEmbed(call);
+            messageReaction.message.edit(newEmbed);
+        }
     }
 }
 
