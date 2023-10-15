@@ -1,0 +1,48 @@
+{
+  "name": "devodiusbot",
+  "version": "0.0.1",
+  "description": "Discord bot initialy for devodius",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "npm run build && npm run start:run",
+    "start:w": "nodemon ./dist/index.js",
+    "start:run": "node ./dist/index.js",
+    "build": "tsc",
+    "build:w": "tsc -w",
+    "dev": "concurrently  \"npm:build:w\" \"npm:start:w\"",
+    "lint": "eslint . --ext .ts --ignore-path .gitignore",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Devodius/devodius_bot.git"
+  },
+  "keywords": [
+    "discord",
+    "bots",
+    "devodius"
+  ],
+  "author": "Devodius",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Devodius/devodius_bot/issues"
+  },
+  "homepage": "https://github.com/Devodius/devodius_bot#readme",
+  "dependencies": {
+    "discord.js": "14.13.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.5",
+    "@typescript-eslint/eslint-plugin": "^6.7.5",
+    "@typescript-eslint/parser": "^6.7.5",
+    "concurrently": "8.2.1",
+    "eslint": "8.51.0",
+    "eslint-config-prettier": "^9.0.0",
+    "jest": "^29.7.0",
+    "nodemon": "3.0.1",
+    "prettier": "^3.0.3",
+    "ts-jest": "^29.1.1",
+    "typescript": "5.2.2"
+  }
+}
