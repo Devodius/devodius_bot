@@ -23,6 +23,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      - name: Lint code
+        run: |
+          npm i -g eslint eslint-config-prettier prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser
+          npm run lint
 
   build:
     needs: lint
@@ -30,10 +34,40 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: install
+        run: npm ci
       - name: Build
-        run: |
-          npm ci
-          npm run build
+        run: npm run build
       - name: Test
         run: |
           npm run test
+
+  analyze:
+    name: Analyze
+    needs: build
+    runs-on: 'ubuntu-latest'
+    timeout-minutes: 360
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript-typescript' ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{matrix.language}}"
