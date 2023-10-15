@@ -1,0 +1,28 @@
+name: commit-lint-action
+description: action that run commit lint
+runs:
+  using: composite
+  steps:
+    - name: Print versions
+      shell: bash
+      run: |
+        git --version
+        node --version
+        npm --version
+        npx commitlint --version
+
+    - name: Install commitlint
+      shell: bash
+      run: |
+        npm install conventional-changelog-conventionalcommits
+        npm install commitlint@latest
+
+    - name: Validate current commit (last commit) with commitlint
+      shell: bash
+      if: github.event_name == 'push'
+      run: npx commitlint --from HEAD~1 --to HEAD --verbose
+
+    - name: Validate PR commits with commitlint
+      shell: bash
+      if: github.event_name == 'pull_request'
+      run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
