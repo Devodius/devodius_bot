@@ -25,7 +25,7 @@ jobs:
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
       - name: Lint code
         run: |
-          npm i -g eslint eslint-config-prettier prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser
+          npm i --no-package-lock --no-save eslint eslint-config-prettier prettier @typescript-eslint/eslint-plugin @typescript-eslint/parser
           npm run lint
 
   build:
