@@ -14,8 +14,8 @@ runs:
     - name: Install commitlint
       shell: bash
       run: |
-        npm install conventional-changelog-conventionalcommits
-        npm install commitlint@latest
+        npm install -g commitlint-config-gitmoji
+        npm install -g commitlint@latest
 
     - name: Validate current commit (last commit) with commitlint
       shell: bash
