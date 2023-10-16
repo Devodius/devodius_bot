@@ -17,9 +17,11 @@ jobs:
           fetch-depth: 0
 
       - name: Lint branch name
+        if: github.event_name == 'pull_request'
         uses: ./.github/actions/branch-lint-action
 
       - name: Lint commit message
+        if: github.event_name == 'pull_request'
         uses: ./.github/actions/commit-lint-action
 
       - uses: gitleaks/gitleaks-action@v2
