@@ -1,0 +1,21 @@
+name: coverage-badge-action
+description: action that run coverage badge
+runs:
+  using: composite
+  steps:
+    - name: Delete remote badges branch
+      shell: bash
+      run: git push origin --delete badges
+
+    - name: Create badges branch
+      shell: bash
+      run: git checkout -b badges
+
+    - name: Generating coverage badges
+      uses: jpb06/jest-badges-action@latest
+      with:
+        target-branch: badges
+
+    - name: Push badges branch
+      shell: bash
+      run: git push origin badges
