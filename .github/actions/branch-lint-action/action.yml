@@ -1,0 +1,21 @@
+name: branch-lint-action
+description: action that run branch lint
+inputs:
+  allowed_names:
+    description: Allowed branch names
+    required: false
+    default: |
+      main
+      /(feat|fix|chore|doc)\/[a-zA-Z0-9_.-]+/i
+  startAfter:
+    description: Date after which the action will start working
+    required: false
+    default: "2023-10-15 00:00:00"
+runs:
+  using: composite
+  steps:
+    - name: Lint branch name
+      uses: lekterable/branchlint-action@2.0.0
+      with:
+        allowed: ${{inputs.allowed_names}}
+        startAfter: ${{inputs.startAfter}}
